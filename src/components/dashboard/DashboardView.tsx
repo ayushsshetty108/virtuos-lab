@@ -12,6 +12,8 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserMenu } from "@/components/auth/UserMenu";
 import { EXPERIMENTS } from "@/lib/experiments";
 import { getProgress, type UserProgress } from "@/lib/progress";
 import { GlassPanel } from "@/components/ui/GlassPanel";
@@ -32,7 +34,9 @@ const AI_TIPS = [
 ];
 
 export function DashboardView() {
+  const { user } = useAuth();
   const [progress, setProgress] = useState<UserProgress | null>(null);
+  const displayName = user?.displayName || user?.email?.split("@")[0] || "Scientist";
 
   useEffect(() => {
     setProgress(getProgress());
@@ -45,25 +49,38 @@ export function DashboardView() {
   const xp = progress?.xp ?? 0;
 
   const board = LEADERBOARD.map((e) =>
-    e.name === "You" ? { ...e, xp: Math.max(xp, e.xp) } : e
+    e.name === "You" ? { ...e, name: displayName, xp: Math.max(xp, e.xp) } : e
   ).sort((a, b) => b.xp - a.xp);
 
   return (
     <div className="min-h-screen bg-[#030712] px-6 py-8">
       <div className="mx-auto max-w-7xl">
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-cyan-400">
             <ArrowLeft className="h-3.5 w-3.5" /> Back to Lab
           </Link>
-          <GlowButton variant="primary" href="/ai-assistant">
-            <Brain className="h-4 w-4" /> AI Assistant
-          </GlowButton>
+          <div className="flex items-center gap-3">
+            <GlowButton variant="primary" href="/ai-assistant" className="!px-4 !py-2.5 text-xs">
+              <Brain className="h-4 w-4" /> AI Assistant
+            </GlowButton>
+            <UserMenu />
+          </div>
         </div>
 
-        <h1 className="font-[family-name:var(--font-orbitron)] text-3xl sm:text-4xl font-bold text-white mb-2">
-          Command <span className="text-cyan-400">Dashboard</span>
-        </h1>
-        <p className="text-slate-400 mb-12">Track progress, achievements, and AI recommendations.</p>
+        <GlassPanel className="dash-card mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-[10px] tracking-widest text-cyan-500 mb-1">LOGGED IN AS</p>
+            <h1 className="font-[family-name:var(--font-orbitron)] text-2xl sm:text-3xl font-bold text-white">
+              Welcome, <span className="text-cyan-400">{displayName}</span>
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">{user?.email}</p>
+          </div>
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-cyan-500/30 text-xl font-bold text-cyan-300">
+            {displayName.slice(0, 2).toUpperCase()}
+          </div>
+        </GlassPanel>
+
+        <p className="text-slate-400 mb-8">Track progress, achievements, and AI recommendations.</p>
 
         <div className="grid gap-6 lg:grid-cols-3 mb-8">
           <GlassPanel className="dash-card lg:col-span-2">

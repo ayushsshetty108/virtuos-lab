@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Atom, Menu, X } from "lucide-react";
 import { GlowButton } from "@/components/ui/GlowButton";
+import { AuthNavbarActions } from "@/components/auth/AuthNavbarActions";
 import { NAV_LINKS } from "@/lib/experiments";
 import { cn } from "@/lib/utils";
 
@@ -28,8 +29,8 @@ export function Navbar() {
         scrolled ? "glass-strong py-3" : "bg-transparent"
       )}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl glass border border-cyan-500/30 group-hover:shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-shadow">
             <Atom className="h-5 w-5 text-cyan-400" />
           </div>
@@ -38,7 +39,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-5 lg:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -50,27 +51,31 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="hidden md:block">
-          <GlowButton variant="primary" href="/experiments/projectile-motion">
-            Launch Experiment
+        <div className="hidden md:flex items-center gap-3">
+          <AuthNavbarActions />
+          <GlowButton variant="secondary" href="/experiments/projectile-motion" className="!px-5 !py-2.5 text-xs">
+            Launch Lab
           </GlowButton>
         </div>
 
-        <button
-          type="button"
-          className="md:hidden text-slate-300"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex md:hidden items-center gap-2">
+          <AuthNavbarActions />
+          <button
+            type="button"
+            className="text-slate-300"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </nav>
 
       {open && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          className="md:hidden mt-4 glass rounded-2xl p-4 flex flex-col gap-4"
+          className="md:hidden mt-4 glass rounded-2xl p-4 flex flex-col gap-4 lg:hidden"
         >
           {NAV_LINKS.map((link) => (
             <Link
